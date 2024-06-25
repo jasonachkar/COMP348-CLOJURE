@@ -1,5 +1,6 @@
 (ns menu
   (:require [clojure.string :as str]))
+;; The 'menu' namespace is defined here, and it requires the 'clojure.string' namespace, aliasing it as 'str'.
 
 (defn print-menu []
   (println "*** City Information Menu ***")
@@ -10,6 +11,7 @@
   (println "4. Display Province Information")
   (println "5. Exit")
   (println "Enter an option?"))
+;; The 'print-menu' function prints the main menu options to the console.
 
 (defn list-cities [cities]
   (println "1.1 List all cities, ordered by city name (ascending)")
@@ -23,40 +25,39 @@
 (defn list-cities-by-province [cities]
   (println "Enter the province name:")
   (flush)
-  (let [province (read-line)
-        filtered-cities (filter #(= province (:province %)) cities)
+  (let [province (str/lower-case (read-line))
+        filtered-cities (filter #(= province (str/lower-case (:province %))) cities)
         sorted-cities (sort-by (juxt :size :city) filtered-cities)]
     (doseq [[index city] (map-indexed vector sorted-cities)]
       (println (str (inc index) ": [\"" (:city city) "\" \"" (:size city) "\" " (:population city) "]")))))
 ;; The 'list-cities-by-province' function lists all cities for a given province, ordered by size (descending) and name (ascending).
-;; It prompts the user to enter a province name, filters and sorts the cities, and prints them in the specified order.
+;; It prompts the user to enter a province name, converts it to lowercase, filters and sorts the cities, and prints them in the specified order.
 
 (defn list-cities-by-density [cities]
   (println "Enter the province name:")
   (flush)
-  (let [province (read-line)
-        filtered-cities (filter #(= province (:province %)) cities)
+  (let [province (str/lower-case (read-line))
+        filtered-cities (filter #(= province (str/lower-case (:province %))) cities)
         sorted-cities (sort-by #(/ (:population %) (:area %)) filtered-cities)]
     (doseq [city sorted-cities]
       (let [density (/ (:population city) (:area city))]
         (println (str "[\"" (:city city) "\" \"" (:province city) "\" \"" (:size city) "\" "
                       (:population city) " " (format "%.2f" density) "]"))))))
 ;; The 'list-cities-by-density' function lists all cities for a given province, ordered by population density in ascending order.
-;; It prompts the user to enter a province name, filters and sorts the cities by population density, and prints them.
-
+;; It prompts the user to enter a province name, converts it to lowercase, filters and sorts the cities by population density, and prints them.
 
 (defn display-city-info [cities]
   (println "Enter the city name:")
   (flush)
-  (let [city-name (read-line)
-        city (first (filter #(= city-name (:city %)) cities))]
+  (let [city-name (str/lower-case (read-line))
+        city (first (filter #(= city-name (str/lower-case (:city %))) cities))]
     (if city
       (let [density (/ (:population city) (:area city))]
         (println (str "[\"" (:city city) "\" \"" (:province city) "\" \"" (:size city) "\" "
                       (:population city) " " (format "%.2f" density) "]")))
       (println "City not found."))))
 ;; The 'display-city-info' function displays information about a specific city.
-;; It prompts the user to enter a city name, finds the city in the list, and prints its information including the population density.
+;; It prompts the user to enter a city name, converts it to lowercase, finds the city in the list, and prints its information including the population density.
 ;; If the city is not found, it prints "City not found."
 
 (defn list-provinces [cities]
@@ -86,9 +87,9 @@
     (let [choice (read-line)]
       (case choice
         "1" (do (println "1. List Cities")
-                (println " 1.1 List all cities, ordered by city name (ascending)")
-                (println " 1.2 List all cities for a given province, ordered by size (descending) and name (ascending)")
-                (println " 1.3 List all cities for a given province, ordered by population density in ascending order")
+                (println "  1.1 List all cities, ordered by city name (ascending)")
+                (println "  1.2 List all cities for a given province, ordered by size (descending) and name (ascending)")
+                (println "  1.3 List all cities for a given province, ordered by population density in ascending order")
                 (flush)
                 (let [sub-choice (read-line)]
                   (case sub-choice
@@ -102,7 +103,6 @@
                 (System/exit 0))
         (do (println "Invalid option, please try again.")
             (recur))))))
-
 ;; The 'show-menu' function displays the main menu and handles user input.
 ;; It uses a loop to repeatedly display the menu, read the user's choice, and perform the corresponding action.
 ;; It supports listing cities, displaying city information, listing provinces, and displaying province information.
